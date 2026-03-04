@@ -7,7 +7,7 @@ export const metadata = {
 export default function ProductsPage() {
   return (
     <main className="max-w-7xl mx-auto px-6 pt-20 pb-12">
-      <Products />
+      <Products showFullCatalog />
     </main>
   )
 }

@@ -20,7 +20,7 @@ const items = [
     title: 'Global Readiness',
     desc: 'Reliable solvent supply with ready inventory and global delivery support.',
     icon: Globe,
-    img: '/national-cancer-institute-MOj06jBit0s-unsplash.jpg'
+    img: '/box holder.png'
   }
 ]
 
