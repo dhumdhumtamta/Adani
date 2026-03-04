@@ -17,8 +17,8 @@ const items = [
     img: '/hans-reniers-lQGJCMY5qcM-unsplash.jpg'
   },
   {
-    title: 'Ready Inventory & Global Access',
-    desc: 'Uninterrupted supply chain with global logistics and stock readiness.',
+    title: 'Global Readiness',
+    desc: 'Reliable solvent supply with ready inventory and global delivery support.',
     icon: Globe,
     img: '/national-cancer-institute-MOj06jBit0s-unsplash.jpg'
   }
