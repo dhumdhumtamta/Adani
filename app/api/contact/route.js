@@ -1,5 +1,3 @@
-import nodemailer from 'nodemailer'
-
 export async function POST(request) {
   try {
     const { name, company, email, message } = await request.json()
@@ -12,22 +10,22 @@ export async function POST(request) {
       )
     }
 
-    // Configure nodemailer transporter
-    // For Gmail, use environment variables:
-    // SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true', // false for TLS, true for SSL
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
-    })
+    // Check if API key is configured
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY not configured')
+      return Response.json(
+        { error: 'Email service not configured. Please contact support.' },
+        { status: 500 }
+      )
+    }
 
-    // Email content
-    const mailOptions = {
-      from: process.env.SMTP_USER,
+    // Lazy load Resend inside handler
+    const { Resend } = await import('resend')
+    const resend = new Resend(process.env.RESEND_API_KEY)
+
+    // Send email using Resend
+    const result = await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: 'Shagunchem30@gmail.com',
       subject: `New Contact Form Submission from ${name}`,
       html: `
@@ -38,13 +36,18 @@ export async function POST(request) {
         <p><strong>Message:</strong></p>
         <p>${message.replace(/\n/g, '<br>')}</p>
       `
+    })
+
+    if (result.error) {
+      console.error('Resend error:', result.error)
+      return Response.json(
+        { error: 'Failed to send email', details: result.error.message },
+        { status: 500 }
+      )
     }
 
-    // Send email
-    await transporter.sendMail(mailOptions)
-
     return Response.json(
-      { success: true, message: 'Email sent successfully' },
+      { success: true, message: 'Email sent successfully', id: result.data.id },
       { status: 200 }
     )
   } catch (error) {
